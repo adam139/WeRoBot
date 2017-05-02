@@ -356,7 +356,7 @@ class Client(object):
 
     def upload_media(self, media_type, media_file):
         """
-        上传临时多媒体文件。
+        上传临时多媒体文件。(上传临时素材)
 
         :param media_type: 媒体文件类型，分别有图片（image）、语音（voice）、视频（video）和缩略图（thumb）
         :param media_file: 要上传的文件，一个 File-object
@@ -375,7 +375,7 @@ class Client(object):
 
     def download_media(self, media_id):
         """
-        下载临时多媒体文件。
+        下载临时多媒体文件。（下载临时素材）
 
         :param media_id: 媒体文件 ID
         :return: requests 的 Response 实例
@@ -415,6 +415,64 @@ class Client(object):
             }
         )
 
+    def mass_send(self,data):
+        """
+        根据OpenID列表群发【订阅号不可用，服务号认证后可用】
+        图文消息：
+        data = {
+   "touser":[
+    "OPENID1",
+    "OPENID2"
+   ],
+   "mpnews":{
+      "media_id":"123dsdajkasd231jhksad"
+   },
+    "msgtype":"mpnews"
+}
+        文本消息：
+{
+   "touser":[
+    "OPENID1",
+    "OPENID2"
+   ],
+    "msgtype": "text",
+    "text": { "content": "hello from boxer."}
+}
+        """
+
+        return self.post(
+            url="https://api.weixin.qq.com/cgi-bin/message/mass/send",
+            data=data
+        )
+#     http://mp.weixin.qq.com/wiki/index.php?title=高级群发接口   
+    def upload_news(self,data):
+        """
+        上传图文消息
+        详情请参考 
+        http://mp.weixin.qq.com/wiki/index.php?title=高级群发接口
+        post数据：
+                {"articles": [
+                                 {"thumb_media_id":"qI6_Ze_6PtV7svjolgs-rN6stStuHIjs9_DidOHaj0Q-mwvBelOXCFZiq2OsIU-p",
+                                  "author":"xxx",
+                                  "title":"Happy Day",
+                                  "content_source_url":"www.qq.com",
+                                  "content":"content",
+                                  "digest":"digest",
+                                  "show_cover_pic":"1"}
+                                  ]
+                                  }                                 
+        
+        :param articles: 一个包含至多10个 :class:`Article` 实例的数组        
+        :return: 返回的 JSON 数据包        
+        https://api.weixin.qq.com/cgi-bin/media/uploadnews?access_token=ACCESS_TOKEN
+        """
+#        data ={}
+#        data = data.append(articles)
+        rt = self.post(
+            url="https://api.weixin.qq.com/cgi-bin/media/uploadnews",
+            data=data)
+        rt = check_error(rt)
+        return rt["media_id"]        
     def upload_news_picture(self, file):
         """
         上传图文消息内的图片。
