@@ -46,7 +46,10 @@ class Client(object):
             kwargs["params"] = {"access_token": self.token}
         if isinstance(kwargs.get("data", ""), dict):
             body = _json.dumps(kwargs["data"], ensure_ascii=False)
-            body = body.encode('utf8')
+            try:
+                body = body.encode('utf8')
+            except:
+                pass
             kwargs["data"] = body
 
         r = requests.request(
