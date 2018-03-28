@@ -418,6 +418,55 @@ class Client(object):
             }
         )
 
+    def mass_send_by_tag(self,data):
+        """
+        根据标签进行群发【订阅号与服务号认证后均可用】
+        http请求方式: POST
+        https://api.weixin.qq.com/cgi-bin/message/mass/sendall?access_token=ACCESS_TOKEN
+        图文消息：
+        data = {
+           "filter":{
+           "is_to_all":false,
+           "tag_id":2
+                   },
+           "mpnews":{
+            "media_id":"123dsdajkasd231jhksad"
+                   },
+            "msgtype":"mpnews",
+            "send_ignore_reprint":0
+                }
+        文本消息：
+        data = {
+       "filter":{
+      "is_to_all":false,
+      "tag_id":2
+       },
+       "text":{
+          "content":"CONTENT"
+        },
+        "msgtype":"text"
+        }
+        音频、视频、图片、卡卷等
+        返回：
+        {
+       "errcode":0,
+       "errmsg":"send job submission success",
+       "msg_id":34182, 
+       "msg_data_id": 206227730
+        }
+            build data:
+            data["filter"]= {"is_to_all":True}
+            data["mpnews"] = at.upload_news()           
+            data["msgtype"] = "mpnews"
+            data["title"] = obj.title
+            data["description"] = obj.description
+            data["send_ignore_reprint"] = 1
+        """
+        
+        return self.post(
+            url="https://api.weixin.qq.com/cgi-bin/message/mass/sendall",
+            data=data
+        )        
     def mass_send(self,data):
         """
         根据OpenID列表群发【订阅号不可用，服务号认证后可用】
